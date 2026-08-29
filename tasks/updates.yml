@@ -1,0 +1,7 @@
+---
+- name: Install apt safety tooling
+  ansible.builtin.apt:
+    name:
+      - apt-listbugs
+      - apt-listchanges
+    state: present

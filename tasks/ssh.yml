@@ -1,0 +1,42 @@
+# Create file for configuration
+- name: Create systemd drop-in directory for ssh.service
+  ansible.builtin.file:
+    path: /etc/systemd/system/ssh.service.d
+    state: directory
+    mode: '0755'
+
+# Append content and restart handler (in handler folder)
+- name: Harden ssh.service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/ssh.service.d/99-hardening.conf
+    mode: '0644'
+    content: |
+      [Service]
+      PrivateTmp=yes
+      ProtectSystem=full
+  notify: restart ssh
+
+# Install and configure fail2ban
+- name: Install fail2ban
+  ansible.builtin.apt:
+    name: fail2ban
+    state: present
+
+- name: Configure sshd jail
+  ansible.builtin.file:
+    path: /etc/fail2ban/jail.d/99-hardening.conf
+    mode: '0644'
+    content: |
+      [sshd]
+      enabled = true
+      backend = systemd
+      maxretry = 5
+      bantime = 10m
+      findtime = 10m
+    notify: restart fail2ban
+
+- name: Check if fail2ban is running and enabled
+  ansible.builtin.systemd_service:
+    name: fail2ban
+    state: started
+    enabled: yes

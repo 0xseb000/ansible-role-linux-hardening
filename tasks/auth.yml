@@ -1,0 +1,7 @@
+---
+# Install libpam-tmprid package, configuration is in syst
+- name: Install libpam-tmpdir (AUTH-9262)
+  ansible.builtin.apt:
+    name: libpam-tmpdir
+    state: present
+

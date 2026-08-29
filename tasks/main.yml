@@ -1,0 +1,4 @@
+---
+- name: Update and upgrade all package
+  ansible.builtin.apt:
+    update_cache: yes
