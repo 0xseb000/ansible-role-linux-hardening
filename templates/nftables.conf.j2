@@ -1,0 +1,29 @@
+#!/usr/sbin/nft -f
+flush ruleset
+
+table inet filter {                 # inet = shared table for IPv4 and IPv6
+    chain input {
+        type filter hook input priority 0; policy drop;   # drop everything not explicitly allowed below
+
+        # Allow replies to connections initiated by this host
+        ct state established,related accept
+        # Drop packets that match no valid connection state
+        ct state invalid drop
+        # Loopback, local services on 127.0.0.1, e.g. systemd-resolved
+        iif lo accept
+
+        # Do not block ICMP
+        ip protocol icmp accept
+        ip6 nexthdr icmpv6 accept
+
+        # Administrative access
+        tcp dport 22 accept
+        udp sport 67 udp dport 68 accept    # DHCP reply from server
+    }
+    chain forward {
+        type filter hook forward priority 0; policy drop;   # host is not a router
+    }
+    chain output {
+        type filter hook output priority 0; policy accept;  # outbound traffic unrestricted
+    }
+}
