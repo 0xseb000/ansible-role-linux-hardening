@@ -14,7 +14,7 @@
       [Service]
       PrivateTmp=yes
       ProtectSystem=full
-  notify: restart ssh
+    notify: restart ssh
 
 # Install and configure fail2ban
 - name: Install fail2ban
@@ -23,8 +23,10 @@
     state: present
 
 - name: Configure sshd jail
-  ansible.builtin.file:
-    path: /etc/fail2ban/jail.d/99-hardening.conf
+  ansible.builtin.copy:
+    dest: /etc/fail2ban/jail.d/sshd.local
+    owner: root
+    group: root
     mode: '0644'
     content: |
       [sshd]
@@ -33,7 +35,7 @@
       maxretry = 5
       bantime = 10m
       findtime = 10m
-    notify: restart fail2ban
+  notify: restart fail2ban
 
 - name: Check if fail2ban is running and enabled
   ansible.builtin.systemd_service:
