@@ -1,22 +1,27 @@
 ---
-# Create directory for the hardening configuration file (next task)
-- name: Create systemd drop-in directory for ssh.service
+# systemd sandboxing must not be applied to ssh.service, otherwise every Ansible runs over SSH breaks
+- name: Remove systemd sandboxing drop-in from ssh.service
   ansible.builtin.file:
-    path: /etc/systemd/system/ssh.service.d
-    state: directory
+    path: /etc/systemd/system/ssh.service.d/99-hardening.conf
+    state: absent
+  notify: Restart ssh
+
+# cloud-init writes "PasswordAuthentication yes" to 50-cloud-init.conf. sshd
+# uses the FIRST value it finds for a keyword and 50- sorts before 99-, so that
+# file silently overrides the hardening drop-in below.
+- name: Prevent cloud-init from re-enabling ssh password authentication
+  ansible.builtin.copy:
+    dest: /etc/cloud/cloud.cfg.d/99-hardening-ssh.cfg
     owner: root
     group: root
-    mode: '0755'
-
-# Append content and restart handler
-- name: Deploy systemd hardening for ssh.service
-  ansible.builtin.copy:
-    dest: /etc/systemd/system/ssh.service.d/99-hardening.conf
     mode: '0644'
     content: |
-      [Service]
-      PrivateTmp=yes
-      ProtectSystem=full
+      ssh_pwauth: false
+
+- name: Remove the cloud-init sshd drop-in
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/50-cloud-init.conf
+    state: absent
   notify: Restart ssh
 
 # sshd configuration template
