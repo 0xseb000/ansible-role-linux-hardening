@@ -1,0 +1,28 @@
+---
+# Install and configure auditd
+- name: Install auditd
+  ansible.builtin.apt:
+    name: auditd
+    state: present
+
+- name: Deploy rules
+  ansible.builtin.copy:
+    dest: /etc/audit/rules.d/99-hardening.rules
+    owner: root
+    group: root
+    mode: '0600'
+    content: |
+      -w /etc/passwd -p wa -k identity
+      -w /etc/shadow -p wa -k identity
+      -w /etc/sudoers -p wa -k privilege
+      -w /etc/sudoers.d/ -p wa -k privilege
+      -w /etc/ssh/sshd_config -p wa -k sshd
+      -w /var/log/auth.log -p wa -k authlog
+      -a always,exit -F arch=b64 -S execve -F euid=0 -F auid>=1000 -F auid!=-1 -k rootcmd
+  notify: Restart auditd
+
+- name: Ensure that auditd is enabled and running
+  ansible.builtin.systemd_service:
+    name: auditd
+    state: started
+    enabled: true

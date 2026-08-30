@@ -2,12 +2,12 @@
 # Load the syctl template and upload it on the targets
 - name: Deploy sysctl template
   ansible.builtin.template:
-    src: 99-hardening.conf.j2
+    src: sysctl-hardening.conf.j2
     dest: /etc/sysctl.d/99-hardening.conf
     owner: root
     group: root
     mode: '0644'
-  notify: reload sysctl
+  notify: Reload sysctl
 
 # Disable binfmt_misc
 - name: Disable binfmt_misc

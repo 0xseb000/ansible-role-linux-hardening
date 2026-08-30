@@ -1,6 +1,6 @@
 ---
 # Install libpam-tmprid package, configuration is in syst
-- name: Install libpam-tmpdir (AUTH-9262)
+- name: Install libpam-tmpdir
   ansible.builtin.apt:
     name: libpam-tmpdir
     state: present
@@ -17,9 +17,11 @@
 - name: Restrict permssions on sudoers drop-in
   ansible.builtin.file:
     path: /etc/sudoers.d/vagrant
+    state: file
     owner: root
     group: root
     mode: '0440'
-    
+
+
 
 
