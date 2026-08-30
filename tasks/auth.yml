@@ -5,3 +5,21 @@
     name: libpam-tmpdir
     state: present
 
+# Restrict permssions of sudoer files and directories
+- name: Restrict permission on /etc/sudoers.d
+  ansible.builtin.file:
+    path: /etc/sudoers.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: Restrict permssions on sudoers drop-in
+  ansible.builtin.file:
+    path: /etc/sudoers.d/vagrant
+    owner: root
+    group: root
+    mode: '0440'
+    
+
+
