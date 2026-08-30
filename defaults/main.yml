@@ -1,6 +1,9 @@
 ---
-# Create the syctl structure for the jinja hardening template
-syctl_hardening:
+hardening_ssh_allowed_users:
+  - vagrant
+
+# Create the sysctl structure for the jinja hardening template
+hardening_sysctl:
   # kernel information leaks
   kernel.kptr_restrict: 2
   kernel.perf_event_paranoid: 3

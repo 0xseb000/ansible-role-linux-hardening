@@ -1,0 +1,20 @@
+# Authentication
+PermitRootLogin no
+PasswordAuthentication no
+PermitEmptyPasswords no
+MaxAuthTries 3
+MaxSessions 4
+AllowUsers {{ hardening_ssh_allowed_users | join(' ') }}
+
+# Forwarding, not needed for administrative access
+X11Forwarding no
+AllowTcpForwarding no
+AllowAgentForwarding no
+
+# Session handling
+ClientAliveInterval 300
+ClientAliveCountMax 2
+LoginGraceTime 30
+
+# Logging
+LogLevel VERBOSE
