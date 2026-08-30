@@ -1,0 +1,4 @@
+{# Load the sysctl values from the defaults/main.yml file #}
+{% for key, value in sysctl_hardening.items() %}
+{{ key }} = {{ value }}
+{% endfor %}

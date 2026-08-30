@@ -12,3 +12,8 @@
     name: fail2ban
     state: restarted
     daemon_reload: yes
+
+# Handler for reloading sysctl
+- name: reload sysctl
+  ansible.builtin.sysctl:
+    state: reloaded
