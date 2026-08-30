@@ -12,6 +12,8 @@
     name: fail2ban
     state: restarted
     daemon_reload: true
+  # Skip the task instead of failing on a missing service on a --check run
+  when: not ansible_check_mode
 
 # Handler for reloading sysctl
 - name: Reload sysctl
@@ -28,3 +30,5 @@
   ansible.builtin.systemd_service:
     name: auditd
     state: restarted
+  # Skip the task instead of failing on a missing service on a --check run
+  when: not ansible_check_mode

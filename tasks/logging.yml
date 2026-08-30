@@ -26,3 +26,5 @@
     name: auditd
     state: started
     enabled: true
+  # Skip the task instead of failing on a missing service on a --check run
+  when: not ansible_check_mode
