@@ -1,0 +1,13 @@
+---
+#  Create and deploy banner for local and remote access
+- name: Deploy login banner
+  ansible.builtin.copy:
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+      Authorized access only. All activity is monitored and logged.
+  loop:
+    - /etc/issue
+    - /etc/issue.net
