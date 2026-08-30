@@ -5,3 +5,23 @@
       - apt-listbugs
       - apt-listchanges
     state: present
+
+# Install unattended (systemd-timer) to check for security updates
+- name: Upgrade installed packages
+  ansible.builtin.apt:
+    upgrade: safe
+
+- name: Install unattended-upgrades
+  ansible.builtin.apt:
+    name: unattended-upgrades
+    state: present
+
+- name: Enable unattended upgrades
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
