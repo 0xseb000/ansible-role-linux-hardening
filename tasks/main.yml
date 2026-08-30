@@ -1,5 +1,44 @@
 ---
+# Refresh the package index once for the whole role.
+# Tagged 'always' so it runs before the tasks on a second run
 - name: Update apt cache
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
+  tags: [always]
+
+- name: Harden authentication
+  ansible.builtin.import_tasks: auth.yml
+  tags: [auth]
+
+- name: Harden SSH access
+  ansible.builtin.import_tasks: ssh.yml
+  tags: [ssh]
+
+- name: Apply kernel and network sysctl hardening
+  ansible.builtin.import_tasks: sysctl.yml
+  tags: [sysctl]
+
+- name: Disable unneeded services
+  ansible.builtin.import_tasks: services.yml
+  tags: [services]
+
+- name: Configure automatic security updates
+  ansible.builtin.import_tasks: updates.yml
+  tags: [updates]
+
+- name: Configure the nftables firewall
+  ansible.builtin.import_tasks: firewall.yml
+  tags: [firewall]
+
+- name: Configure audit logging
+  ansible.builtin.import_tasks: logging.yml
+  tags: [logging]
+
+- name: Deploy login banners
+  ansible.builtin.import_tasks: banner.yml
+  tags: [banner]
+
+- name: Enforce AppArmor profiles
+  ansible.builtin.import_tasks: apparmor.yml
+  tags: [apparmor]
